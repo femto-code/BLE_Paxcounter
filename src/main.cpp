@@ -79,11 +79,16 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
 			}
 			std::string serial_nmbr_decoded = intstrs36 + zero_padding_str + intstr4;
 
-
+		//decodierung des device status
 			std::string device_status = res.substr(24, 2);
-						
-			//ESP_LOGE(LOG_TAG, "part_nmbr: %s", part_nmbr.data());
+			int device_status_int = (int)stoi(device_status, 0, 16);
 			
+			std::string device_status_output ;
+			int hilf = device_status_int&0x3B;
+			if((hilf)==0x01){device_status_output ="Gerät einsatzbereit";}
+			else{device_status_output ="Gerät nicht einsatzbereit";}
+		//Ausgabe der dekodierten Informationen
+			//ESP_LOGE(LOG_TAG, "part_nmbr: %s", part_nmbr.data());
 			//ESP_LOGE(LOG_TAG, "part_nmbr_lower5: %s", part_nmbr_lower5.data());
 			//ESP_LOGE(LOG_TAG, "part_nmbr_upper3: %s", part_nmbr_upper3.data());
 			//ESP_LOGE(LOG_TAG, "part_nmbr_upper3 int: %d", part_nmbr_upper3_int);
@@ -91,26 +96,15 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
 			
 			ESP_LOGE(LOG_TAG, " ");
 			//ESP_LOGE(LOG_TAG, "serial_nmbr: %s", serial_nmbr.data());
-			/* ESP_LOGE(LOG_TAG, "serial_nmbr upper3: %s", serial_nmbr_upper3.data());
-			ESP_LOGE(LOG_TAG, "serial_nmbr upper3 int: %d", serial_nmbr_upper3_int);
-			ESP_LOGE(LOG_TAG, "serial_nmbr lower2: %s", serial_nmbr_lower2.data()); */
+			//ESP_LOGE(LOG_TAG, "serial_nmbr upper3: %s", serial_nmbr_upper3.data());
+			//ESP_LOGE(LOG_TAG, "serial_nmbr upper3 int: %d", serial_nmbr_upper3_int);
+			//ESP_LOGE(LOG_TAG, "serial_nmbr lower2: %s", serial_nmbr_lower2.data());
 			ESP_LOGE(LOG_TAG, "serial_nmbr upper3 decoded: %s", serial_nmbr_decoded.data());
 
 			ESP_LOGE(LOG_TAG, "device_status: %s", device_status.data());
+			ESP_LOGE(LOG_TAG, "device_status int: %d hilf: %d", device_status_int, hilf);
+			ESP_LOGE(LOG_TAG, "device_status_test: %s", device_status_output.data());
 
-			// JsonObject obj = doc.createNestedObject();
-			// obj["mac"] = advertisedDevice.getAddress().toString().c_str();
-			// obj["pn"] = part_nmbr_decoded;
-			// obj["ds"] = device_status;
-			// obj["sn"] = serial_nmbr_decoded;
-			// serializeJson(doc, buffer);
-			JsonObject obj = doc.createNestedObject();
-			obj["mac"] = 1;
-			obj["pn"] = 2;
-			obj["ds"] = 3;
-			obj["sn"] = 4;
-			serializeJson(doc, buffer);
-			
 		}
 
 
