@@ -61,11 +61,10 @@ class MyAdvertisedDeviceCallbacks: public BLEAdvertisedDeviceCallbacks {
 				zero_padding_str+="0";
 			}
 			}
-			
 			std::string serial_nmbr_decoded = intstrs36 + zero_padding_str + intstr4;
 
 
-			std::string device_status = res.substr(26, 2);
+			std::string device_status = res.substr(24, 2);
 						
 			//ESP_LOGE(LOG_TAG, "part_nmbr: %s", part_nmbr.data());
 			
