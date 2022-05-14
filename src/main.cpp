@@ -12,12 +12,32 @@
 #include "BLEAdvertisedDevice.h"
 #include "sdkconfig.h"
 
+
 static const char LOG_TAG[] = "SampleScan";
 
 void setup() {}
 
 class MyAdvertisedDeviceCallbacks: public BLEAdvertisedDeviceCallbacks {
 	void onResult(BLEAdvertisedDevice advertisedDevice) {
+
+		std::string res = "";
+		char *pHex = BLEUtils::buildHexData(nullptr, (uint8_t*)advertisedDevice.getManufacturerData().data(), advertisedDevice.getManufacturerData().length());
+		res += pHex;
+		//ESP_LOGE(LOG_TAG, "res: %s", res.c_str());
+		if (res.find("bc040a") != std::string::npos) {
+			ESP_LOGE(LOG_TAG, "PAC found! Address: %s", advertisedDevice.getAddress().toString().c_str());
+		}
+		return;
+
+
+		// ESP_LOGE(LOG_TAG, "payload: %x", advertisedDevice.getPayload());
+		ESP_LOGE(LOG_TAG, "man_data: %x", advertisedDevice.getManufacturerData().data());
+		std::string temp = advertisedDevice.getManufacturerData();
+		ESP_LOGE(LOG_TAG, "temp: %d", temp.c_str());
+		if (temp.find("bc04") != std::string::npos) {
+			ESP_LOGE(LOG_TAG, "Dräger found!");
+		}
+		ESP_LOGE(LOG_TAG, "address: %s", advertisedDevice.getAddress().toString().c_str());
 		if (advertisedDevice.haveName()) {
 			ESP_LOGE(LOG_TAG, "Advertised Device: %s", advertisedDevice.toString().c_str());
 		}
