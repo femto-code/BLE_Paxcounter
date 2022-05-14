@@ -18,8 +18,8 @@
 #define RX 3
 
 // Create the JSON document
-StaticJsonDocument<250> doc;
-char buffer[250];
+StaticJsonDocument<1000> doc;
+char jbuffer[1000];
 
 //HardwareSerial &hSerial = Serial1; // can be Serial2 as well, just use proper pins
 
@@ -41,10 +41,10 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
 		// ESP_LOGE(LOG_TAG, "res: %s", res.c_str());
 		if (res.find("bc040a") != std::string::npos)
 		{
-			ESP_LOGE(LOG_TAG, "PAC found! Address: %s", advertisedDevice.getAddress().toString().c_str());
-			ESP_LOGE(LOG_TAG, "Byte_count: %d", advertisedDevice.getManufacturerData().length());
+			//ESP_LOGE(LOG_TAG, "PAC found! Address: %s", advertisedDevice.getAddress().toString().c_str());
+			//ESP_LOGE(LOG_TAG, "Byte_count: %d", advertisedDevice.getManufacturerData().length());
 			
-			ESP_LOGE(LOG_TAG, "man_dat: %s", res.data());
+			//ESP_LOGE(LOG_TAG, "man_dat: %s", res.data());
 			
 		//decodierung der Part-Number
 			std::string part_nmbr = res.substr(6, 8);
@@ -88,29 +88,23 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
 			//ESP_LOGE(LOG_TAG, "part_nmbr_lower5: %s", part_nmbr_lower5.data());
 			//ESP_LOGE(LOG_TAG, "part_nmbr_upper3: %s", part_nmbr_upper3.data());
 			//ESP_LOGE(LOG_TAG, "part_nmbr_upper3 int: %d", part_nmbr_upper3_int);
-			ESP_LOGE(LOG_TAG, "part_nmbr decoded: %s", part_nmbr_decoded.data());
+			//ESP_LOGE(LOG_TAG, "part_nmbr decoded: %s", part_nmbr_decoded.data());
 			
-			ESP_LOGE(LOG_TAG, " ");
+			//ESP_LOGE(LOG_TAG, " ");
 			//ESP_LOGE(LOG_TAG, "serial_nmbr: %s", serial_nmbr.data());
 			/* ESP_LOGE(LOG_TAG, "serial_nmbr upper3: %s", serial_nmbr_upper3.data());
 			ESP_LOGE(LOG_TAG, "serial_nmbr upper3 int: %d", serial_nmbr_upper3_int);
 			ESP_LOGE(LOG_TAG, "serial_nmbr lower2: %s", serial_nmbr_lower2.data()); */
-			ESP_LOGE(LOG_TAG, "serial_nmbr upper3 decoded: %s", serial_nmbr_decoded.data());
+			//ESP_LOGE(LOG_TAG, "serial_nmbr upper3 decoded: %s", serial_nmbr_decoded.data());
 
-			ESP_LOGE(LOG_TAG, "device_status: %s", device_status.data());
+			//ESP_LOGE(LOG_TAG, "device_status: %s", device_status.data());
 
-			// JsonObject obj = doc.createNestedObject();
-			// obj["mac"] = advertisedDevice.getAddress().toString().c_str();
-			// obj["pn"] = part_nmbr_decoded;
-			// obj["ds"] = device_status;
-			// obj["sn"] = serial_nmbr_decoded;
-			// serializeJson(doc, buffer);
 			JsonObject obj = doc.createNestedObject();
-			obj["mac"] = 1;
-			obj["pn"] = 2;
-			obj["ds"] = 3;
-			obj["sn"] = 4;
-			serializeJson(doc, buffer);
+			obj["mac"] = advertisedDevice.getAddress().toString();
+			obj["pn"] = part_nmbr_decoded;
+			obj["ds"] = device_status;
+			obj["sn"] = serial_nmbr_decoded;
+			serializeJson(doc, jbuffer);
 			
 		}
 
@@ -132,16 +126,17 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
 };
 
 static void run() {
-	ESP_LOGE(LOG_TAG, "Scanning sample starting");
+	//ESP_LOGE(LOG_TAG, "Scanning sample starting");
 	BLEDevice::init("");
 	BLEScan *pBLEScan = BLEDevice::getScan();
 	pBLEScan->setAdvertisedDeviceCallbacks(new MyAdvertisedDeviceCallbacks());
 	pBLEScan->setActiveScan(true);
-	BLEScanResults scanResults = pBLEScan->start(30);
-	ESP_LOGE(LOG_TAG, "We found %d devices", scanResults.getCount());
-	ESP_LOGE(LOG_TAG, "Scanning sample ended");
-	Serial.write(buffer);
-	ESP_LOGE(LOG_TAG, "Buffer: %s", buffer);
+	BLEScanResults scanResults = pBLEScan->start(10);
+	//ESP_LOGE(LOG_TAG, "We found %d devices", scanResults.getCount());
+	//ESP_LOGE(LOG_TAG, "Scanning sample ended");
+	doc.clear();
+	//Serial.write(jbuffer);
+	//ESP_LOGE(LOG_TAG, "Buffer: %s", jbuffer);
 }
 
 void loop(void) {
@@ -154,8 +149,8 @@ void loop(void) {
 	// 	Serial.write("From hSerial:" + hSerial.read()); // read it from hSerial and send it to  UBS
 	// }
 	//hSerial.write("1");
-	Serial.write("2");
+	//Serial.write("2");
 	//hSerial.print(buffer);
-	Serial.print(buffer);
-	delay(3000);
+	//Serial.print("blub");
+	Serial.print(jbuffer);
 } // app_main
