@@ -85,8 +85,14 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
 			
 			std::string device_status_output ;
 			int hilf = device_status_int&0x3B;
-			if((hilf)==0x01){device_status_output ="Gerät einsatzbereit";}
-			else{device_status_output ="Gerät nicht einsatzbereit";}
+			if ((hilf) == 0x01)
+			{
+				device_status_output = "1"; // einsatzbereit
+			}
+			else
+			{
+				device_status_output = "0"; // nicht einsatzbereit
+			}
 		//Ausgabe der dekodierten Informationen
 			//ESP_LOGE(LOG_TAG, "part_nmbr: %s", part_nmbr.data());
 			//ESP_LOGE(LOG_TAG, "part_nmbr_lower5: %s", part_nmbr_lower5.data());
@@ -106,7 +112,7 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
 			JsonObject obj = doc.createNestedObject();
 			obj["mac"] = advertisedDevice.getAddress().toString();
 			obj["pn"] = part_nmbr_decoded;
-			obj["ds"] = device_status;
+			obj["ds"] = device_status_output;
 			obj["sn"] = serial_nmbr_decoded;
 			serializeJson(doc, jbuffer);
 			
