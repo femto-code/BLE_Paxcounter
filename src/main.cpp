@@ -84,15 +84,25 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
 			int device_status_int = (int)stoi(device_status, 0, 16);
 			
 			std::string device_status_output ;
+			/*int STATUS_OVERALL = device_status_int&0x01; 1
+			int STATUS_ALARM = device_status_int&0x02;2
+			int STATUS_ERROR = device_status_int&0x08;3
+			int STATUS_CALLIBRATION = device_status_int&0x10;4
+			int STATUS_BUMPTEST = device_status_int&0x20;5*/
 			int hilf = device_status_int&0x3B;
 			if ((hilf) == 0x01)
 			{
 				device_status_output = "1"; // einsatzbereit
 			}
-			else
+			else// nicht einsatzbereit nach fehlercodes 
 			{
-				device_status_output = "0"; // nicht einsatzbereit
+				if((hilf) == 0x03){device_status_output = "2";}
+				else if((hilf) == 0x09){device_status_output = "3";}
+				else if((hilf) == 0x11){device_status_output = "4";}
+				else if((hilf) == 0x21){device_status_output = "5";}
+				else {device_status_output = "0";}// nicht einsatzbereit sonstige fehlercodes
 			}
+			
 		//Ausgabe der dekodierten Informationen
 			//ESP_LOGE(LOG_TAG, "part_nmbr: %s", part_nmbr.data());
 			//ESP_LOGE(LOG_TAG, "part_nmbr_lower5: %s", part_nmbr_lower5.data());
@@ -107,7 +117,7 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
 			ESP_LOGE(LOG_TAG, "serial_nmbr lower2: %s", serial_nmbr_lower2.data()); */
 			//ESP_LOGE(LOG_TAG, "serial_nmbr upper3 decoded: %s", serial_nmbr_decoded.data());
 
-			//ESP_LOGE(LOG_TAG, "device_status: %s", device_status.data());
+			ESP_LOGE(LOG_TAG, "device_status: %s", device_status_output.data());
 
 			JsonObject obj = doc.createNestedObject();
 			obj["mac"] = advertisedDevice.getAddress().toString();
